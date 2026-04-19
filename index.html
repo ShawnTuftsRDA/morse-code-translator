@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morse Code Translator - Text to Morse Code Converter</title>
+<meta name="description" content="Free Morse code translator. Convert text to Morse code and Morse code to text instantly. Includes audio playback and complete reference chart.">
+<meta name="keywords" content="morse code translator, text to morse code, morse code converter, morse code audio, learn morse code, SOS morse code">
+<style>
+:root{--bg:#0f1117;--bg2:#1a1d26;--bg3:#22263a;--border:#2a2f45;--accent:#4f8ef7;--green:#10b981;--amber:#f59e0b;--text:#e2e8f0;--text-dim:#94a3b8;--white:#f8fafc;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.topnav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;}
+.nav-logo{font-size:16px;font-weight:700;color:var(--accent);text-decoration:none;}
+.ad-banner{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;}
+.layout{display:grid;grid-template-columns:1fr 300px;gap:24px;max-width:1160px;margin:0 auto;padding:40px 24px;flex:1;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;}.ad-side{display:none;}}
+.hero{text-align:center;margin-bottom:28px;}
+.hero h1{font-size:clamp(26px,5vw,40px);font-weight:800;color:var(--white);margin-bottom:8px;}
+.hero p{font-size:16px;color:var(--text-dim);}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:600px){.panels{grid-template-columns:1fr;}}
+.panel-label{font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+textarea{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:16px;border-radius:10px;font-size:15px;font-family:monospace;resize:vertical;min-height:160px;outline:none;line-height:1.8;}
+textarea:focus{border-color:var(--accent);}
+#morse-output{color:var(--amber);letter-spacing:2px;}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.controls{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.btn{padding:10px 22px;border-radius:8px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{filter:brightness(1.1);}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent);}
+.speed-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);}
+.speed-slider{width:100px;accent-color:var(--accent);}
+.pulse-dot{width:14px;height:14px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;opacity:0;transition:opacity .05s;}
+.pulse-dot.on{opacity:1;}
+.ref-toggle{background:var(--bg3);border:1px solid var(--border);color:var(--text-dim);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:12px;width:100%;}
+.ref-table{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;}
+.ref-table.open{display:block;}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;}
+.ref-item{background:var(--bg3);border-radius:6px;padding:8px;text-align:center;font-size:13px;}
+.ref-char{font-weight:700;color:var(--white);font-size:15px;}
+.ref-morse{color:var(--amber);letter-spacing:1px;font-family:monospace;font-size:12px;margin-top:2px;}
+.ad-mid{text-align:center;margin:20px 0;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;}
+.ad-side{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;min-height:600px;display:flex;align-items:flex-start;justify-content:center;color:var(--text-dim);font-size:12px;}
+.faq{margin-top:32px;}.faq h2{font-size:20px;font-weight:700;color:var(--white);margin-bottom:16px;}
+.faq-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:8px;}
+.faq-q{font-weight:600;color:var(--white);margin-bottom:6px;}.faq-a{color:var(--text-dim);font-size:14px;line-height:1.6;}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:20px;text-align:center;color:var(--text-dim);font-size:13px;}
+footer a{color:var(--text-dim);text-decoration:none;margin:0 8px;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="/" class="nav-logo">QuickTools</a></nav>
+<div class="ad-banner">Advertisement</div>
+<div class="layout"><main>
+<div class="hero"><h1>Morse Code Translator</h1><p>Convert text to Morse code and back. Play audio, explore the reference chart.</p></div>
+<div class="panels">
+  <div>
+    <div class="panel-label">Text <button class="copy-btn" onclick="cp('text-input')">Copy</button></div>
+    <textarea id="text-input" placeholder="Type text here..." oninput="textToMorse()"></textarea>
+  </div>
+  <div>
+    <div class="panel-label">Morse Code <button class="copy-btn" onclick="cp('morse-output')">Copy</button></div>
+    <textarea id="morse-output" placeholder="Or type Morse code here (. - and /)" oninput="morseToText()"></textarea>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="play-btn" onclick="playMorse()">&#9654; Play Audio</button>
+  <button class="btn btn-secondary" onclick="stopMorse()">&#9646;&#9646; Stop</button>
+  <div class="speed-row">
+    Speed: <input type="range" class="speed-slider" id="speed" min="1" max="10" value="5">
+    <span id="speed-lbl">5</span>
+    <span class="pulse-dot" id="pulse"></span>
+  </div>
+</div>
+<button class="ref-toggle" onclick="toggleRef()">Show / Hide Reference Chart</button>
+<div class="ref-table" id="ref-table"></div>
+<div class="ad-mid">Advertisement</div>
+<div class="faq"><h2>Frequently Asked Questions</h2>
+<div class="faq-item"><div class="faq-q">What is Morse code?</div><div class="faq-a">Morse code is a communication system using dots (short signals) and dashes (long signals) to represent letters and numbers. It was invented by Samuel Morse in the 1830s and used extensively for telegrams and maritime communication.</div></div>
+<div class="faq-item"><div class="faq-q">How do you write SOS in Morse code?</div><div class="faq-a">SOS is written as ... --- ... (three dots, three dashes, three dots). It was chosen as a distress signal because it is simple, distinctive, and easy to transmit even under stress.</div></div>
+<div class="faq-item"><div class="faq-q">What is a dit and a dah?</div><div class="faq-a">A dit (dot) is a short signal lasting one unit of time. A dah (dash) is a long signal lasting three units. The gap between symbols within a letter is one unit, between letters is three units, and between words is seven units.</div></div>
+<div class="faq-item"><div class="faq-q">Is Morse code still used today?</div><div class="faq-a">Yes. Morse code is still used by amateur radio operators worldwide, in aviation (airport beacons broadcast their identifier in Morse), and it remains a skill taught in military training and survival courses.</div></div>
+</div></main>
+<aside class="ad-side">Advertisement</aside>
+</div>
+<footer>2025 QuickTools &nbsp;|&nbsp; <a href="/privacy.html">Privacy</a> <a href="/terms.html">Terms</a></footer>
+<div class="toast" id="toast">Copied!</div>
+<script>
+const MC={A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",G:"--.",H:"....",I:"..",J:".---",K:"-.-",L:".-..",M:"--",N:"-.",O:"---",P:".--.",Q:"--.-",R:".-.",S:"...",T:"-",U:"..-",V:"...-",W:".--",X:"-..-",Y:"-.--",Z:"--..",0:"-----",1:".----",2:"..---",3:"...--",4:"....-",5:".....",6:"-....",7:"--...",8:"---..",9:"----."};
+const RM=Object.fromEntries(Object.entries(MC).map(([k,v])=>[v,k]));
+let playing=false,audioCtx=null;
+function textToMorse(){
+  const t=document.getElementById("text-input").value.toUpperCase();
+  const m=t.split("").map(c=>c===" "?"/":(MC[c]||"")).join(" ");
+  document.getElementById("morse-output").value=m.trim();
+}
+function morseToText(){
+  const m=document.getElementById("morse-output").value;
+  const t=m.split(" / ").map(word=>word.split(" ").map(code=>RM[code]||"").join("")).join(" ");
+  document.getElementById("text-input").value=t;
+}
+async function playMorse(){
+  if(playing)return;
+  playing=true;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  const speed=11-parseInt(document.getElementById("speed").value);
+  const unit=speed*60;
+  const m=document.getElementById("morse-output").value;
+  const pulse=document.getElementById("pulse");
+  let t=audioCtx.currentTime+0.1;
+  for(const sym of m.split("")){
+    if(!playing)break;
+    if(sym==="."){beep(t,unit,pulse);t+=unit/1000+unit/1000/3;}
+    else if(sym==="-"){beep(t,unit*3,pulse);t+=unit*3/1000+unit/1000/3;}
+    else if(sym===" "){t+=unit*2/1000;}
+    else if(sym==="/"){t+=unit*4/1000;}
+  }
+  setTimeout(()=>{playing=false;},t*1000-audioCtx.currentTime*1000+200);
+}
+function beep(t,durMs,pulse){
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.connect(g);g.connect(audioCtx.destination);
+  o.type="sine";o.frequency.value=600;
+  const dur=durMs/1000;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.3,t+0.005);
+  g.gain.setValueAtTime(0.3,t+dur-0.005);g.gain.linearRampToValueAtTime(0,t+dur);
+  o.start(t);o.stop(t+dur);
+  setTimeout(()=>{pulse.classList.add("on");setTimeout(()=>pulse.classList.remove("on"),durMs);},Math.max(0,(t-audioCtx.currentTime)*1000));
+}
+function stopMorse(){playing=false;if(audioCtx)audioCtx.close();audioCtx=null;}
+function toggleRef(){
+  const el=document.getElementById("ref-table");
+  el.classList.toggle("open");
+  if(el.classList.contains("open")&&!el.innerHTML){
+    el.innerHTML='<div class="ref-grid">'+Object.entries(MC).map(([c,m])=>`<div class="ref-item"><div class="ref-char">${c}</div><div class="ref-morse">${m}</div></div>`).join("")+'</div>';
+  }
+}
+function cp(id){
+  const el=document.getElementById(id);
+  navigator.clipboard.writeText(el.value).then(()=>{const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000);});
+}
+document.getElementById("speed").oninput=function(){document.getElementById("speed-lbl").textContent=this.value;};
+// Default
+document.getElementById("text-input").value="HELLO WORLD";
+textToMorse();
+</script>
+</body></html>
